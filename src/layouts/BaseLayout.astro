@@ -1,0 +1,164 @@
+---
+import { ClientRouter } from "astro:transitions";
+import { env } from "~/lib/env.ts";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = "AI-Stack-Fit · Welcher AI-Stack ist wirklich Ihrer?",
+  description = "In 90 Sekunden welche 12 von 52 AI-Tools wirklich zu Ihrem DACH-Unternehmen passen. Mit Brüchen im Stack, EU-Score und Roadmap.",
+  noindex = false,
+} = Astro.props;
+
+const siteUrl = env("PUBLIC_SITE_URL") ?? Astro.site?.toString() ?? "https://braum.org";
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl).toString();
+
+// OG-image: pre-rendered PNG card in /public/og/. Run `pnpm og:build` after
+// editing card definitions in src/lib/og.ts. PNG (vs SVG) for universal
+// crawler support — Twitter/X and WhatsApp don't render SVG og:image.
+const ogImageUrl = new URL("/og/default.png", siteUrl).toString();
+
+const umamiScript = env("UMAMI_SCRIPT_URL");
+const umamiWebsiteId = env("UMAMI_WEBSITE_ID");
+const umamiEnabled = Boolean(umamiScript && umamiWebsiteId);
+const umamiOrigin = umamiScript ? new URL(umamiScript).origin : null;
+
+// JSON-LD: Organization, WebSite, SoftwareApplication for the AI-Stack-Fit tool
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Braum Consulting",
+  url: "https://braum.org",
+  logo: new URL("/favicon.svg", siteUrl).toString(),
+  sameAs: ["https://braum.dev", "https://braum.consulting"],
+};
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "AI-Stack-Fit · braum.org",
+  url: "https://braum.org",
+  inLanguage: "de-DE",
+  publisher: { "@type": "Organization", name: "Braum Consulting" },
+};
+const toolSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "AI-Stack-Fit",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web Browser",
+  url: canonicalUrl,
+  description:
+    "Schnell-Screening, das in 90 Sekunden den passenden AI-First Tech-Stack für ein Unternehmen ermittelt - basierend auf Größe, Branche, Strategie und Bestands-Stack.",
+  inLanguage: "de-DE",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+  publisher: { "@type": "Organization", name: "Braum Consulting" },
+};
+
+// Deterministic-ish ambient particles, generated server-side once.
+const PARTICLE_COUNT = 26;
+const seed = Math.floor(Date.now() / (1000 * 60 * 30));
+let prng = seed || 1;
+const rand = (): number => {
+  prng = (prng * 1664525 + 1013904223) % 0xffffffff;
+  return prng / 0xffffffff;
+};
+
+const particles = Array.from({ length: PARTICLE_COUNT }, () => {
+  const tx = rand() * 100;
+  const ty = rand() * 100;
+  const dur = 22 + rand() * 26;
+  const delay = -rand() * dur;
+  const size = 1.2 + rand() * 1.6;
+  const op = 0.18 + rand() * 0.5;
+  const isMint = rand() < 0.18;
+  return {
+    tx: tx.toFixed(2),
+    ty: ty.toFixed(2),
+    dur: dur.toFixed(1),
+    delay: delay.toFixed(1),
+    size: size.toFixed(2),
+    op: op.toFixed(2),
+    isMint,
+  };
+});
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#051E16" />
+
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="Sitemap" href="/sitemap.xml" />
+    {umamiOrigin && <link rel="preconnect" href={umamiOrigin} crossorigin />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Braum Consulting · AI-Stack-Fit" />
+    <meta property="og:locale" content="de_DE" />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="AI-Stack-Fit · Tech-Stack-Konfigurator von Braum Consulting" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="AI-Stack-Fit · Tech-Stack-Konfigurator von Braum Consulting" />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(toolSchema)} />
+
+    {
+      umamiEnabled && (
+        <script is:inline defer src={umamiScript} data-website-id={umamiWebsiteId} data-do-not-track="true" />
+      )
+    }
+    <ClientRouter />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true" transition:persist transition:name="atmosphere">
+      <div class="glow1"></div>
+      <div class="glow2"></div>
+      <div class="vignette"></div>
+    </div>
+    <div class="lab-grid-bg" aria-hidden="true" transition:persist transition:name="lab-grid"></div>
+    <div class="atmosphere-particles" aria-hidden="true" transition:persist transition:name="particles">
+      {
+        particles.map((p) => (
+          <span
+            class:list={["particle", p.isMint && "mint"]}
+            style={`--tx:${p.tx}%;--ty:${p.ty}%;--dur:${p.dur}s;--delay:${p.delay}s;--size:${p.size}px;--op:${p.op}`}
+          />
+        ))
+      }
+    </div>
+    <div class="grain-fixed" aria-hidden="true" transition:persist transition:name="grain"></div>
+
+    <main class="relative z-[1] min-h-screen">
+      <slot />
+    </main>
+
+    <script>
+      import "~/scripts/animations.client.ts";
+    </script>
+  </body>
+</html>

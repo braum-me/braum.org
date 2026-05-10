@@ -1,0 +1,107 @@
+---
+import AiStackFitTool from "~/components/labs/ai-stack-fit/AiStackFit";
+import LabBoot from "~/components/labs/shared/LabBoot.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  title="AI-Stack-Fit · Welcher AI-Stack ist wirklich Ihrer?"
+  description="In 90 Sekunden welche 12 von 52 AI-Tools wirklich zu Ihrem DACH-Unternehmen passen. Mit Brüchen im Stack, EU-Score und Roadmap."
+>
+  <div class="tool-page">
+    <header class="tool-bar" role="banner">
+      <span class="tool-bar-brand">
+        <span class="tool-bar-brand-name">BRAUM CONSULTING</span>
+        <span class="tool-bar-sep">·</span>
+        <span class="tool-bar-brand-tag">AI-STACK-FIT</span>
+      </span>
+      <a
+        href="https://braum.dev"
+        class="tool-bar-out"
+        target="_blank"
+        rel="noreferrer noopener"
+        aria-label="Mehr Tools auf braum.dev"
+        data-track="tool.bar.dev"
+      >
+        <span>weitere Labs</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+    </header>
+
+    <AiStackFitTool client:load />
+  </div>
+
+  <LabBoot id="L_01" title="AI-Stack-Fit" mode="module" />
+</BaseLayout>
+
+<style>
+  .tool-page {
+    position: relative;
+    z-index: 1;
+  }
+
+  .tool-bar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 32px;
+    background: rgba(2, 14, 10, 0.7);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .tool-bar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+  .tool-bar-brand-name {
+    color: var(--mint);
+    font-weight: 500;
+  }
+  .tool-bar-sep {
+    color: var(--fg-dim);
+  }
+  .tool-bar-brand-tag {
+    color: var(--cream);
+  }
+
+  .tool-bar-out {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--fg-dim);
+    transition: color var(--dur-base) var(--ease-standard);
+  }
+  .tool-bar-out:hover {
+    color: var(--mint);
+  }
+
+  @media (max-width: 720px) {
+    .tool-bar {
+      padding: 12px 16px;
+      font-size: 10px;
+    }
+    .tool-bar-brand,
+    .tool-bar-out {
+      font-size: 10px;
+    }
+    .tool-bar-brand-tag {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+// Catch-all redirect: any /labs/* path moves to braum.dev (the new Labs hub).
+// AI-Stack-Fit specifically redirects to root since it lives standalone here.
+export const prerender = false;
+
+const rest = Astro.params.rest ?? "";
+
+// AI-Stack-Fit lives at root on braum.org, not on braum.dev
+if (rest === "ai-stack-fit" || rest.startsWith("ai-stack-fit/")) {
+  return Astro.redirect("/", 301);
+}
+
+// Everything else under /labs goes to braum.dev/labs/<rest>
+return Astro.redirect(`https://braum.dev/labs/${rest}`, 301);
+---
