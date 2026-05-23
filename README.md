@@ -6,6 +6,8 @@ A browser-side screening tool for DACH-region companies that figures out, in 90 
 
 Live: [braum.org](https://braum.org)
 
+![Preview](.github/preview.png)
+
 ## What it does
 
 - **Wizard** in 4-5 steps (mode, size, industry, revenue, existing stack, strategy) collects the profile entirely client-side.
